@@ -13,7 +13,11 @@ import React, {useEffect, useState, useRef} from 'react';
 import Slider from '@react-native-community/slider';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import songs from '../model/Data';
-import TrackPlayer, {State, usePlaybackState} from 'react-native-track-player';
+import TrackPlayer, {
+  State,
+  usePlaybackState,
+  useProgress,
+} from 'react-native-track-player';
 
 const {width, height} = Dimensions.get('window');
 
@@ -38,9 +42,13 @@ const togglePayBack = async playBackState => {
 };
 
 const MusicPlayer = () => {
+  const progress = useProgress();
   const playBackState = usePlaybackState();
   const [songIndex, setSongIndex] = useState(0);
+
+  // Referencias padrão
   const scrollX = useRef(new Animated.Value(0)).current;
+  const songSlider = useRef(null);
 
   useEffect(() => {
     setUpPlayer();
@@ -51,6 +59,18 @@ const MusicPlayer = () => {
       //console.log(index);
     });
   }, [scrollX]);
+
+  const skipToNext = () => {
+    songSlider.current.scrollToOffset({
+      offset: (songIndex + 1) * width,
+    });
+  };
+
+  const skipToPrevious = () => {
+    songSlider.current.scrollToOffset({
+      offset: (songIndex - 1) * width,
+    });
+  };
 
   const renderSongs = ({item, index}) => {
     return (
@@ -68,6 +88,7 @@ const MusicPlayer = () => {
         {/* image */}
 
         <Animated.FlatList
+          ref={songSlider}
           renderItem={renderSongs}
           data={songs}
           keyExtractor={item => item.id}
@@ -101,25 +122,35 @@ const MusicPlayer = () => {
         <View>
           <Slider
             style={styles.progressBar}
-            value={10}
+            value={progress.position}
             minimumValue={0}
-            maximumValue={100}
+            maximumValue={progress.duration}
             thumbTintColor="#FFD369"
             minimumTrackTintColor="#FFD369"
             maximumTrackTintColor="#fff"
-            onSlidingComplete={() => {}}
+            onSlidingComplete={async value => {
+              await TrackPlayer.seekTo(value);
+            }}
           />
           {/* music progress duration */}
 
           <View style={styles.progressLevelDuration}>
-            <Text style={styles.progressLabelText}>00:00</Text>
-            <Text style={styles.progressLabelText}>00:00</Text>
+            <Text style={styles.progressLabelText}>
+              {new Date(progress.position * 1000)
+                .toLocaleTimeString()
+                .substring(3)}
+            </Text>
+            <Text style={styles.progressLabelText}>
+              {new Date((progress.duration - progress.position) * 1000)
+                .toLocaleTimeString()
+                .substring(3)}
+            </Text>
           </View>
         </View>
 
         {/* music controls */}
         <View style={styles.musicControlsContainer}>
-          <TouchableOpacity onPress={() => {}}>
+          <TouchableOpacity onPress={skipToPrevious}>
             <Ionicons name="play-skip-back-outline" size={35} color="#FFD369" />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => togglePayBack(playBackState)}>
@@ -133,7 +164,7 @@ const MusicPlayer = () => {
               color="#FFD369"
             />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => {}}>
+          <TouchableOpacity onPress={skipToNext}>
             <Ionicons
               name="play-skip-forward-outline"
               size={35}
