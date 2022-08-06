@@ -7,22 +7,58 @@ import {
   Dimensions,
   Image,
   FlatList,
+  Animated,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import Slider from '@react-native-community/slider';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import songs from '../model/Data';
+import TrackPlayer, {State, usePlaybackState} from 'react-native-track-player';
 
 const {width, height} = Dimensions.get('window');
 
+const setUpPlayer = async () => {
+  try {
+    await TrackPlayer.setupPlayer();
+    await TrackPlayer.add(songs);
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+const togglePayBack = async playBackState => {
+  const currentTrack = await TrackPlayer.getCurrentTrack();
+  if (currentTrack != null) {
+    if (playBackState === State.Paused) {
+      await TrackPlayer.play();
+    } else {
+      await TrackPlayer.pause();
+    }
+  }
+};
+
 const MusicPlayer = () => {
+  const playBackState = usePlaybackState();
+  const [songIndex, setSongIndex] = useState(0);
+  const scrollX = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    setUpPlayer();
+    scrollX.addListener(({value}) => {
+      //console.log('scrollX value: ', value, 'Width device: ', width);
+      const index = Math.round(value / width);
+      setSongIndex(index);
+      //console.log(index);
+    });
+  }, [scrollX]);
+
   const renderSongs = ({item, index}) => {
     return (
-      <View style={styles.mainImageWrapper}>
+      <Animated.View style={styles.mainImageWrapper}>
         <View style={[styles.imageWrapper, styles.elevation]}>
           <Image source={item.artwork} style={styles.musicImage} />
         </View>
-      </View>
+      </Animated.View>
     );
   };
 
@@ -31,7 +67,7 @@ const MusicPlayer = () => {
       <View style={styles.mainContainer}>
         {/* image */}
 
-        <FlatList
+        <Animated.FlatList
           renderItem={renderSongs}
           data={songs}
           keyExtractor={item => item.id}
@@ -39,13 +75,26 @@ const MusicPlayer = () => {
           pagingEnabled
           showsHorizontalScrollIndicator={false}
           songContent
-          onScroll={() => {}}
+          onScroll={Animated.event(
+            [
+              {
+                nativeEvent: {
+                  contentOffset: {x: scrollX},
+                },
+              },
+            ],
+            {useNativeDriver: true},
+          )}
         />
 
         {/* Song content */}
         <View>
-          <Text style={[styles.songContent, styles.songTitle]}>Jump</Text>
-          <Text style={[styles.songContent, styles.songArtist]}>Van Halen</Text>
+          <Text style={[styles.songContent, styles.songTitle]}>
+            {songs[songIndex].title}
+          </Text>
+          <Text style={[styles.songContent, styles.songArtist]}>
+            {songs[songIndex].artist}
+          </Text>
         </View>
 
         {/* slider */}
@@ -73,8 +122,16 @@ const MusicPlayer = () => {
           <TouchableOpacity onPress={() => {}}>
             <Ionicons name="play-skip-back-outline" size={35} color="#FFD369" />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => {}}>
-            <Ionicons name="ios-pause-circle" size={72} color="#FFD369" />
+          <TouchableOpacity onPress={() => togglePayBack(playBackState)}>
+            <Ionicons
+              name={
+                playBackState === State.Playing
+                  ? 'ios-pause-circle'
+                  : 'ios-play-circle'
+              }
+              size={72}
+              color="#FFD369"
+            />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => {}}>
             <Ionicons
