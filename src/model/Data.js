@@ -41,13 +41,6 @@ const songs = [
     artwork: require('../assets/img/img5.jpg'),
     url: 'https://firebasestorage.googleapis.com/v0/b/spotify-clone-7a2ef.appspot.com/o/Ringtone%2FAudio%2FCrimson%20Fly%20-%20Huma-Huma.mp3?alt=media&token=b2d30b27-286e-4d7d-82ad-1bdfa76a4058',
   },
-  {
-    id: 7,
-    title: 'Jump',
-    artist: 'Van Halen',
-    artwork: require('../assets/img/van-halen.jpg'),
-    url: 'https://firebasestorage.googleapis.com/v0/b/spotify-clone-7a2ef.appspot.com/o/Ringtone%2FAudio%2FCrimson%20Fly%20-%20Huma-Huma.mp3?alt=media&token=b2d30b27-286e-4d7d-82ad-1bdfa76a4058',
-  },
 ];
 
 export default songs;
