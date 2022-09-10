@@ -2,7 +2,9 @@
 
 Um reprodutor de musicas simples feito em React Native. A aplicação foi desenvolvida para aprender como utilizar a biblioteca react-native-track-player, segui [esse tutorial](https://www.youtube.com/watch?v=dPw5vCXhrmc) para fazer o app.
 
-## Screenshots
+<br/>
+  <p align = "center"><img src="https://img.shields.io/badge/STATUS-CONCLU%C3%8DDO-green" /></p>
+<br/>
 
 <p align="center">
     <img width = "200" height= "400" src = "src/assets/to_readme/screen1.png">
@@ -13,13 +15,13 @@ Um reprodutor de musicas simples feito em React Native. A aplicação foi desenv
        <img width = "200" height= "400" src = "src/assets/to_readme/gif.gif">
 </p>
 
-## Tecnologias
-- React Native
-- react-native-track-player
-- react-native-vector-icons
+## :iphone: Tecnologias
+- `React Native`
+- `react-native-track-player`
+- `react-native-vector-icons`
 ___
 
-## Instalação
+## 💻 Instalação
 
 Clone o projeto e acesse a sua pasta:
 
