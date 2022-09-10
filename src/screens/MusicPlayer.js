@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import {
   View,
   Text,
@@ -6,7 +7,6 @@ import {
   TouchableOpacity,
   Dimensions,
   Image,
-  FlatList,
   Animated,
 } from 'react-native';
 import React, {useEffect, useState, useRef} from 'react';
@@ -117,7 +117,6 @@ const MusicPlayer = () => {
       const index = Math.round(value / width);
       skipTo(index);
       setSongIndex(index);
-      //console.log(index);
     });
 
     return () => {
@@ -138,7 +137,7 @@ const MusicPlayer = () => {
     });
   };
 
-  const renderSongs = ({item, index}) => {
+  const renderSongs = () => {
     return (
       <Animated.View style={styles.mainImageWrapper}>
         <View style={[styles.imageWrapper, styles.elevation]}>
@@ -198,6 +197,7 @@ const MusicPlayer = () => {
               await TrackPlayer.seekTo(value);
             }}
           />
+
           {/* music progress duration */}
 
           <View style={styles.progressLevelDuration}>
